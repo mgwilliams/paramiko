@@ -52,11 +52,11 @@ from paramiko.ssh_exception import SSHException, BadAuthenticationType, ChannelE
 #     http://nitace.bsd.uchicago.edu:8080/hashtar
 from Crypto.Cipher import Blowfish, AES, DES3, ARC4
 from Crypto.Hash import SHA, MD5
+from Crypto.Random import atfork
 try:
     from Crypto.Util import Counter
 except ImportError:
     from paramiko.util import Counter
-
 
 # for thread cleanup
 _active_threads = []
@@ -1525,6 +1525,7 @@ class Transport (threading.Thread):
         # GC'd. it's a bug in Thread.)
 
         # active=True occurs before the thread is launched, to avoid a race
+        atfork()
         _active_threads.append(self)
         if self.server_mode:
             self._log(DEBUG, 'starting thread (server mode): %s' % hex(long(id(self)) & 0xffffffffL))
